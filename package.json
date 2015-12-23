@@ -1,0 +1,25 @@
+{
+  "name": "nativescript-location",
+  "version": "0.1.1",
+  "description": "A nativescript ios plugin to request location",
+  "main": "location-manager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "location"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tns-core-modules": "^1.5.1"
+  },
+  "nativescript": {
+    "platforms": {
+      "ios": "1.0.0"
+    }
+  },
+  "dependencies": {
+    "nativescript-geolocation": "0.0.6"
+  }
+}
