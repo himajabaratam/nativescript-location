@@ -1,4 +1,24 @@
 import { LocationManager as ILocationManager } from "nativescript-location";
+
+class HZLocationListenerImpl extends NSObject implements CLLocationManagerDelegate {
+    public static ObjCProtocols = [CLLocationManagerDelegate];
+
+    static new(): HZLocationListenerImpl {
+        return <HZLocationListenerImpl>super.new();
+    }
+
+    private authCallback : (status:number) => void;
+    
+    public initWithAuthorizationCallback(authCallback:(status:number)=> void): HZLocationListenerImpl {
+        this.authCallback = authCallback;
+        return this;
+    }
+
+    public locationManagerDidChangeAuthorizationStatus(locationManager: CLLocationManager, authorizationStatus : number) {
+        this.authCallback(authorizationStatus);
+    }
+}
+
 export class LocationManager implements ILocationManager {
 	
 	private locationManager : CLLocationManager;
@@ -10,7 +30,7 @@ export class LocationManager implements ILocationManager {
 	public requestLocation():Promise<any> {
 		let authorizationStatus : number = CLLocationManager.authorizationStatus();
 		
-		return new Promise<any>((resolve, reject)=>{
+		return new Promise<string>((resolve, reject)=>{
 			if (!CLLocationManager.locationServicesEnabled()) {
 				reject("Location services are not enabled");
 			} else if (authorizationStatus== CLAuthorizationStatus.kCLAuthorizationStatusDenied) {
@@ -23,20 +43,17 @@ export class LocationManager implements ILocationManager {
 			} else {
 				//kCLAuthorizationStatusNotDetermined
 				//We ask for permission.
-				this.locationManager.requestWhenInUseAuthorization();
-				let intervalId = setInterval(()=>{
-					let authorizationStatus: number = CLLocationManager.authorizationStatus();
+                this.locationManager.delegate = HZLocationListenerImpl.new().initWithAuthorizationCallback( (authorizationStatus: number) => {
 					if (authorizationStatus== CLAuthorizationStatus.kCLAuthorizationStatusAuthorized || 
 						authorizationStatus == CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse) {
-						clearInterval(intervalId);
 						resolve("success");
 					} else if (authorizationStatus == CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
-						//Wait for one more second.
+                        //Wait till we get a sucess or reject.
 					} else {
-						clearInterval(intervalId);
 						reject("Failed to obtain location");
 					}
-				}, 1000);
+                });
+				this.locationManager.requestWhenInUseAuthorization();
 			}
 		});
 	}

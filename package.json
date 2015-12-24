@@ -18,8 +18,5 @@
     "platforms": {
       "ios": "1.0.0"
     }
-  },
-  "dependencies": {
-    "nativescript-geolocation": "0.0.6"
   }
 }
