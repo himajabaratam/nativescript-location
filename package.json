@@ -1,8 +1,9 @@
 {
   "name": "nativescript-location",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A nativescript ios plugin to request location",
   "main": "location-manager.js",
+  "typings" : "./location.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
